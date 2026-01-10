@@ -5,30 +5,51 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class InstantiateBulletsShooting : MonoBehaviour
 {
-    [SerializeField] private float number;
+    [SerializeField] private float _speed;
     [SerializeField] private float _timeWaitShooting;
     [SerializeField] private GameObject _prefab;
+    [SerializeField] private Transform ObjectToShoot;
 
-    public Transform ObjectToShoot;
+    private bool _isWork = true;
+    private Coroutine _shootingWorkerRoutine;
+    private WaitForSeconds _shootingWait;
 
-    void Start()
+    private void Start()
     {
-        StartCoroutine(_shootingWorker());
+        _shootingWait = new WaitForSeconds(_timeWaitShooting);
+        _shootingWorkerRoutine = StartCoroutine(ShootingWorkerRoutine());
     }
 
-    public  IEnumerator _shootingWorker()
+    private void OnDisable()
     {
-        public bool isWork = enabled;
+        _isWork = false;
 
-        while (isWork)
+        if (_shootingWorkerRoutine != null)
         {
-            var _vector3direction = (ObjectToShoot.position - transform.position).normalized;
-            var NewBullet = Instantiate(_prefab, transform.position + _vector3direction, Quaternion.identity);
+            StopCoroutine(_shootingWorkerRoutine);
+            _shootingWorkerRoutine = null;
+        }
+    }
+
+    private IEnumerator ShootingWorkerRoutine()
+    {
+        yield return null;
+
+        while (_isWork)
+        {
+            if (ObjectToShoot == null)
+                throw new NullReferenceException(nameof(IndexPlaces));
+
+            if(_prefab == null)
+                throw new NullReferenceException(nameof(_prefab));
+
+            var _vector3Direction = (ObjectToShoot.position - transform.position).normalized;
+            var NewBullet = Instantiate(_prefab, transform.position + _vector3Direction, Quaternion.identity);
 
             NewBullet.GetComponent<Rigidbody>().transform.up = _vector3direction;
-            NewBullet.GetComponent<Rigidbody>().velocity = _vector3direction * number;
+            NewBullet.GetComponent<Rigidbody>().velocity = _vector3direction * _speed;
 
-            yield return new WaitForSeconds(_timeWaitShooting);
+            yield return _shootingWait;
         }
     }
 }
