@@ -5,22 +5,21 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class InstantiateBulletsShooting : MonoBehaviour
 {
+    [SerializeField] private float number;
+    [SerializeField] private float _timeWaitShooting;
+    [SerializeField] private GameObject _prefab;
 
-    [SerializeField] public float number;
-
-    [SerializeField] GameObject _prefab;
     public Transform ObjectToShoot;
-    [SerializeField] float _timeWaitShooting;
 
-    // Start is called before the first frame update
     void Start()
     {
-
         StartCoroutine(_shootingWorker());
     }
-    IEnumerator _shootingWorker()
+
+    public  IEnumerator _shootingWorker()
     {
-        bool isWork = enabled;
+        public bool isWork = enabled;
+
         while (isWork)
         {
             var _vector3direction = (ObjectToShoot.position - transform.position).normalized;
@@ -31,16 +30,5 @@ public class InstantiateBulletsShooting : MonoBehaviour
 
             yield return new WaitForSeconds(_timeWaitShooting);
         }
-
-
     }
-    public void Update()
-    {
-        // Update is called once per frame
-    }
-
-
-
-
-
 }
