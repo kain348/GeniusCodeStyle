@@ -1,12 +1,14 @@
 using UnityEngine;
 
-public class GoPlaces : MonoBehaviour
+public class WaypointPatroller : MonoBehaviour
 {
     [Header("Movement Settings")]
     [SerializeField] private float _speed = 1f;
 
     [Header("Path Settings")]
     [SerializeField] private Transform _waypointsRoot;
+
+    private const float ReachedPointSqrDistance = 0.01f;
 
     private Transform[] _waypoints;
     private int _currentIndex;
@@ -15,7 +17,7 @@ public class GoPlaces : MonoBehaviour
     {
         if (_waypointsRoot == null)
         {
-            Debug.LogError($"{nameof(GoPlaces)} on {name}: waypoints root is not assigned.", this);
+            Debug.LogError($"{nameof(WaypointPatroller)} on {name}: waypoints root is not assigned.", this);
             enabled = false;
 
             return;
@@ -25,7 +27,7 @@ public class GoPlaces : MonoBehaviour
         int count = _waypointsRoot.childCount;
         if (count == 0)
         {
-            Debug.LogError($"{nameof(GoPlaces)} on {name}: waypoints root has no children.", this);
+            Debug.LogError($"{nameof(WaypointPatroller)} on {name}: waypoints root has no children.", this);
             enabled = false;
 
             return;
@@ -45,7 +47,7 @@ public class GoPlaces : MonoBehaviour
 
         transform.position = Vector3.MoveTowards(transform.position, targetPoint.position, _speed * Time.deltaTime);
 
-        if ((transform.position - targetPoint.position).sqrMagnitude < 0.01f)
+        if ((transform.position - targetPoint.position).sqrMagnitude < ReachedPointSqrDistance)
             MoveToNextPoint();
     }
 

@@ -8,7 +8,7 @@ public class BulletShooter : MonoBehaviour
     [SerializeField] private float _bulletSpeed = 5f;
     [SerializeField] private float _shootInterval = 1f;
 
-    [SerializeField] private GameObject _bulletPrefab;
+    [SerializeField] private Bullet _bulletPrefab;
     [SerializeField] private Transform _target;
 
     private Coroutine _shootingCoroutine;
@@ -53,17 +53,9 @@ public class BulletShooter : MonoBehaviour
         {
             Vector3 direction = (_target.position - transform.position).normalized;
 
-            GameObject newBullet = Instantiate(_bulletPrefab, transform.position + direction, Quaternion.identity);
+            Bullet newBullet = Instantiate(_bulletPrefab, transform.position + direction, Quaternion.identity);
 
-            if (newBullet.TryGetComponent(out Rigidbody bulletRigidbody))
-            {
-                bulletRigidbody.transform.up = direction;
-                bulletRigidbody.velocity = direction * _bulletSpeed;
-            }
-            else
-            {
-                Debug.LogWarning($"{nameof(BulletShooter)} on {name}: bullet prefab has no Rigidbody component.", this);
-            }
+            newBullet.Initialize(direction, _bulletSpeed);
 
             yield return _shootWait;
         }
